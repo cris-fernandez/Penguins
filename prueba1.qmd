@@ -1,0 +1,106 @@
+---
+title: "Penguins_Quatro"
+author: "Cristopher F"
+format: html
+editor: visual
+---
+
+## Quarto
+
+Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+
+## Descarga de paquetes y lectura de la base de datos
+
+'penguins' contiene datos de medidas morfológicas, 'penguins_raw', sobre la puesta, morfología, e isótopos.
+
+```{r}
+install.packages("palmerpenguins")
+library(palmerpenguins)
+data(penguins)
+
+summary(penguins)
+summary(penguins_raw)
+```
+
+## 1.- Número de individuos totales, masculinos y femeninos por especie. La media, desviación estándar, valor mínimo y mñaximo de la longitud y profundidad del pico, la longitud de la aleta y el tamaño.
+
+### 1.1.- Número de individuos totales y por sexos desglosados por especie.
+
+Individuos totales por especie:
+
+```{r}
+require(dplyr)
+species.grouped <- penguins %>% dplyr::count(, species)
+```
+
+Se obtiene un total de `r species.grouped[1, 2]` pingüinos de Adelia (Adelie), `r species.grouped[2, 2]` (Chinstrap) y `r species.grouped[3, 2]` pingüinos juanito (Gentoo).
+
+Individuos por sexo y especie:
+
+```{r echo=TRUE}
+species.sex <- count(penguins, species, sex)
+species.sex %>% filter(sex != "NA")
+# Otra opción es filter(y != is.na(y))
+```
+
+### 1.2.- Media, desviación estándar, valor mínimo y máximo de la longitud y profundidad del pico, la longitud de la aleta y el tamaño.
+
+Longitud de los picos:
+
+```{r echo=TRUE}
+bill.length <- filter(penguins, bill_length_mm != "NA") 
+long.pico <- c(mean(bill.length$bill_length_mm), sd(bill.length$bill_length_mm), min(bill.length$bill_length_mm), max(bill.length$bill_length_mm))
+names(long.pico) <- c("Media", "Desv_est", "Min", "Max")
+long.pico
+```
+Profundidad de los picos:
+
+```{r echo=TRUE}
+bill.depth <- filter(penguins, bill_depth_mm != "NA") 
+prof.pico <- c(mean(bill.depth$bill_depth_mm), sd(bill.depth$bill_depth_mm), min(bill.depth$bill_depth_mm), max(bill.depth$bill_depth_mm))
+names(prof.pico) <- c("Media", "Desv_est", "Min", "Max")
+prof.pico
+```
+Longitud de las aletas:
+
+```{r echo=TRUE}
+flipper.length <- filter(penguins, flipper_length_mm != "NA") 
+long.aleta <- c(mean(flipper.length$flipper_length_mm), sd(flipper.length$flipper_length_mm), min(flipper.length$flipper_length_mm), max(flipper.length$flipper_length_mm))
+names(long.aleta) <- c("Media", "Desv_est", "Min", "Max")
+long.aleta
+```
+Tamaño:
+
+```{r echo=TRUE}
+body.mass <- filter(penguins, body_mass_g != "NA") 
+masa.corp <- c(mean(body.mass$body_mass_g), sd(body.mass$body_mass_g), min(body.mass$body_mass_g), max(body.mass$body_mass_g))
+names(masa.corp) <- c("Media", "Desv_est", "Min", "Max")
+masa.corp
+```
+## 2.- Un gráfico de barras que represente el número de individuos muestreados de cada especie en cada isla, representando las especies en diferentes colores (chinstrap – morado, gentoo – azul, adelie – naranja). Contesta a las siguientes preguntas: ¿qué especie se ha muestreado en las tres islas? ¿cuántos individuos se han muestreado de la isla Dream?
+
+Limpio las variables para no tener ningún NA:
+
+```{r echo=TRUE}
+islas <- data.frame(penguins$species, penguins$island) %>% filter(penguins.species != "NA") %>% filter(penguins.island != "NA")
+```
+
+Ahora la gráfica:
+
+```{r echo=TRUE}
+require(ggplot2)
+islas.plot <- ggplot(data = islas) + geom_bar(aes(x = penguins.island, fill = penguins.species)) + scale_fill_manual(name = "Especies de pingüino", values = c("orange", "purple", "navy")) + labs(x = "Isla", y = "Número de individuos (n)")
+islas.plot
+```
+
+### 2.1.- ¿Qué especie se ha muestreado en las tres islas?
+
+Como se puede observar en la anterior gráfica, el pingüino de Adelia.
+
+### 2.2.- ¿Cuántos individuos se han muestreado de la isla Dream?
+
+```{r echo=TRUE}
+
+```
+
+Un gráfico multipanel de cajas y bigotes del tamaño de los pingüinos según su sexo, donde aparezca un panel para cada especie. Contesta a las siguientes preguntas: ¿qué especie tiene mayor tamaño? ¿en qué especie las hembras y los machos tienen un tamaño más similar?
