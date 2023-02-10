@@ -1,6 +1,6 @@
 ---
 title: "Penguins_Quatro"
-author: "Cristopher F"
+author: "Cristopher Fernández de Blas"
 format: html
 editor: visual
 ---
@@ -100,7 +100,55 @@ Como se puede observar en la anterior gráfica, el pingüino de Adelia.
 ### 2.2.- ¿Cuántos individuos se han muestreado de la isla Dream?
 
 ```{r echo=TRUE}
+islas %>% count(penguins.species, penguins.island)
+```
+Se muestrearon 56 individuos de pingüinos de Adelia en la isla Dream.
 
+
+## 3.- Un gráfico multipanel de cajas y bigotes del tamaño de los pingüinos según su sexo, donde aparezca un panel para cada especie. Contesta a las siguientes preguntas: ¿qué especie tiene mayor tamaño? ¿en qué especie las hembras y los machos tienen un tamaño más similar?
+
+Primero el pingüino de Adelia:
+
+```{r echo=TRUE}
+adelia <- body.mass %>% filter(species == "Adelie") %>% 
+  filter(body_mass_g != "NA") %>% filter(sex != "NA") %>% ggplot() + 
+  geom_boxplot(aes(x = body_mass_g, y = sex, fill = sex)) + theme(legend.position = "none") +labs(title = "Pingüino de Adelia", x = "Masa corporal (g)",
+    y = "Sexo", fill = NULL) + theme(legend.position = "none") + 
+  scale_fill_manual(values = c("steelblue4", "steelblue2"))
+adelia
 ```
 
-Un gráfico multipanel de cajas y bigotes del tamaño de los pingüinos según su sexo, donde aparezca un panel para cada especie. Contesta a las siguientes preguntas: ¿qué especie tiene mayor tamaño? ¿en qué especie las hembras y los machos tienen un tamaño más similar?
+A continuación, el barbijo:
+
+```{r echo=TRUE}
+barbijo <- body.mass %>% filter(species == "Chinstrap") %>% 
+  filter(body_mass_g != "NA") %>% filter(sex != "NA") %>% ggplot() + 
+  geom_boxplot(aes(x = body_mass_g, y = sex, fill = sex)) + theme(legend.position = "none") +labs(title = "Pingüino barbijo", x = "Masa corporal (g)",
+    y = "Sexo", fill = NULL) + theme(legend.position = "none") + 
+  scale_fill_manual(values = c("seagreen4", "seagreen2"))
+barbijo
+```
+
+```{r echo=TRUE}
+juanito <- body.mass %>% filter(species == "Gentoo") %>% 
+  filter(body_mass_g != "NA") %>% filter(sex != "NA") %>% ggplot() + 
+  geom_boxplot(aes(x = body_mass_g, y = sex, fill = sex)) + theme(legend.position = "none") +labs(title = "Pingüino juanito", x = "Masa corporal (g)",
+    y = "Sexo", fill = NULL) + theme(legend.position = "none") + 
+  scale_fill_manual(values = c("tomato4", "tomato"))
+juanito
+```
+
+Ahora junto las gráficas en un mismo panel:
+
+```{r echo=TRUE}
+library(patchwork)
+adelia + barbijo + juanito + plot_layout(nrow = 2, ncol = 2)
+```
+
+### 3.1.- ¿Qué especie tiene mayor tamaño?
+
+El pingüino juanito (gentoo), con tamaños que incluso superan los 6 kg.
+
+### 3.2.- ¿En qué especie las hembras y los machos tienen un tamaño más similar?
+
+En el pingüino barbijo (chinstrap), pues las barras de error solapan en mayor medida.
